@@ -4,4 +4,4 @@
 Useful links
 ------------
 
-* [JMH]{http://openjdk.java.net/projects/code-tools/jmh/} - java benchmarking
+* [JMH](http://openjdk.java.net/projects/code-tools/jmh/) - java benchmarking
