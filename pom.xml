@@ -8,16 +8,28 @@
     <name>timeseries</name>
     <url>https://github.com/jonfreedman/timeseries</url>
 
+    <licenses>
+        <license>
+            <name>GNU General Public License (GPL) v3</name>
+            <url>http://www.gnu.org/licenses/gpl.txt</url>
+        </license>
+    </licenses>
+
     <scm>
         <connection>scm:git:git://github.com/jonfreedman/timeseries.git</connection>
-        <url>https://github.com/jonfreedman/timeseries</url>
         <developerConnection>scm:git:git@github.com:jonfreedman/timeseries.git</developerConnection>
+        <url>https://github.com/jonfreedman/timeseries</url>
     </scm>
 
     <ciManagement>
-        <system>travis</system>
+        <system>Travis CI</system>
         <url>https://travis-ci.org/jonfreedman/timeseries</url>
     </ciManagement>
+
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/jonfreedman/timeseries/issues</url>
+    </issueManagement>
 
     <build>
         <pluginManagement>
@@ -118,4 +130,12 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <developers>
+        <developer>
+            <id>jon</id>
+            <name>Jon Freedman</name>
+            <timezone>Europe/London</timezone>
+        </developer>
+    </developers>
 </project>
