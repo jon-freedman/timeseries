@@ -8,6 +8,17 @@
     <name>timeseries</name>
     <url>https://github.com/jonfreedman/timeseries</url>
 
+    <scm>
+        <connection>scm:git:git://github.com/jonfreedman/timeseries.git</connection>
+        <url>https://github.com/jonfreedman/timeseries</url>
+        <developerConnection>scm:git:git@github.com:jonfreedman/timeseries.git</developerConnection>
+    </scm>
+
+    <ciManagement>
+        <system>travis</system>
+        <url>https://travis-ci.org/jonfreedman/timeseries</url>
+    </ciManagement>
+
     <build>
         <pluginManagement>
             <plugins>
@@ -68,12 +79,6 @@
             </plugin>
         </plugins>
     </build>
-
-    <scm>
-        <connection>scm:git:git://github.com/jonfreedman/timeseries.git</connection>
-        <url>https://github.com/jonfreedman/timeseries</url>
-        <developerConnection>scm:git:git@github.com:jonfreedman/timeseries.git</developerConnection>
-    </scm>
 
     <dependencies>
         <dependency>
