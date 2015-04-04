@@ -5,7 +5,7 @@ import java.util.SortedSet;
 /**
  * @author jon
  */
-public interface TimeSeriesCollection<K extends Comparable<K>, T extends Comparable<T>, V> {
+public interface TimeSeriesCollection<K extends Comparable<K>, T extends Comparable<? super T>, V> {
     public SortedSet<K> keySet();
 
     public T minValue();
