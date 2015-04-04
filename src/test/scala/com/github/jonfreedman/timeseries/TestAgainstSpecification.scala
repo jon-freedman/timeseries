@@ -9,8 +9,9 @@ import org.junit.runner.RunWith
  */
 @RunWith(classOf[Cucumber])
 @CucumberOptions(
+  plugin = Array("json:target/cucumber.json"),
   features = Array("src/test/resources/cucumber"),
-  glue = Array("com.github.jonfreedman.timeseries.steps")
+  glue = Array("com.github.jonfreedman.timeseries.steps"),
+  tags = Array("~@ignore")
 )
-class TestAgainstSpecification {
-}
+class TestAgainstSpecification

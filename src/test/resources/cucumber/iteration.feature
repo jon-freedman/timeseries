@@ -1,8 +1,11 @@
 Feature: Iteration
 
-  Scenario: Can iterate simple time series
-    Given an Integer time series with String key "foo"
-    And Integer time series with String key "foo" contains 1 -> 1
-    And Integer time series with String key "foo" contains 2 -> 2
-    When sum is calculated
-    Then result is 3
+  Scenario: Can traverse to next value
+    Given a LocalDateTraverser with initial value '2015-04-04'
+    When traversed to next
+    Then the traversed value is '2015-04-05'
+
+  Scenario: Can traverse to nth value
+    Given a LocalDateTraverser with initial value '2015-04-04'
+    When traversal skipped by 1
+    Then the traversed value is '2015-04-06'
