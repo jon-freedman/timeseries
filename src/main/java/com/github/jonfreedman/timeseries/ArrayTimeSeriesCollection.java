@@ -14,6 +14,7 @@ import java.util.function.Function;
 public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends Comparable<? super T>, V> implements TimeSeriesCollection<K, T, V> {
     private final ConcurrentMap<Integer, T> timeLookup = new ConcurrentHashMap<>();
     private final Function<T, Traverser<T>> traverserFactory;
+    private SortedSet<K> keys;
     private final Map<K, V[]> values;
     private final T initialTimeValue;
     private final int maxIndex;
@@ -22,6 +23,7 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
                                      final Map<K, V[]> values) {
         this.initialTimeValue = initialTimeValue;
         this.traverserFactory = traverserFactory;
+        this.keys = Collections.unmodifiableSortedSet(new TreeSet<>(values.keySet()));
         this.values = values;
 
         int max = 0;
@@ -33,7 +35,7 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
 
     @Override
     public SortedSet<K> keySet() {
-        return Collections.unmodifiableSortedSet(new TreeSet<>(values.keySet()));
+        return keys;
     }
 
     @Override
