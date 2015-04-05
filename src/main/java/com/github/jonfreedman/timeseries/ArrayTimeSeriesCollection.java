@@ -171,6 +171,8 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
                             final int nextX = tailKeys.first();
                             final V nextY = ts.get(nextX);
                             ts.put(i, interpolator.getY(i, 0, null, nextX, nextY));
+                        } else {
+                            throw new IllegalStateException(String.format("Cannot interpolate a value for %sth value %s without any observations", i, traverserFactory.apply(minTimeValue).skip(i - 1)));
                         }
                     } else if (sampleValue == null) {
                         sampleValue = ts.get(i);
