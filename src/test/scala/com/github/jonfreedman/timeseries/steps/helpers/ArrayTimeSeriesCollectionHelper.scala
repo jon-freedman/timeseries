@@ -22,16 +22,17 @@ import cucumber.runtime.java.guice.ScenarioScoped
 
 object ArrayTimeSeriesCollectionHelper {
 
-  class LocalDateCollectionBuilder(first: LocalDate, last: LocalDate,
-                                   values: Map[String, Map[LocalDate, lang.Double]] = Map.empty,
-                                   interpolator: ValueInterpolator[lang.Double] = new FlatFillInterpolator[lang.Double](Direction.forward)) {
+  class LocalDateCollectionBuilder(first: LocalDate, last: LocalDate, values: Map[String, Map[LocalDate, lang.Double]],
+                                   interpolator: ValueInterpolator[lang.Double]) {
+    def this(first: LocalDate, last: LocalDate) = this(first, last, Map.empty, new FlatFillInterpolator[lang.Double](Direction.forward))
+
     def addValue(key: String, date: LocalDate, value: Double): LocalDateCollectionBuilder =
       new LocalDateCollectionBuilder(first, last, values.updated(key, values.getOrElse(key, Map.empty).updated(date, Double.box(value))), interpolator)
 
     def withInterpolator(interpolator: ValueInterpolator[lang.Double]): LocalDateCollectionBuilder =
       new LocalDateCollectionBuilder(first, last, values, interpolator)
 
-    private[ArrayTimeSeriesCollectionHelper] def build(): ArrayTimeSeriesCollection[String, LocalDate, lang.Double] = {
+    def build(): ArrayTimeSeriesCollection[String, LocalDate, lang.Double] = {
       val builder = new Builder[String, LocalDate, lang.Double]
       for {
         (key, vs) <- values

@@ -33,7 +33,7 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
 
     @Override
     public SortedSet<K> keySet() {
-        return new TreeSet<>(values.keySet());
+        return Collections.unmodifiableSortedSet(new TreeSet<>(values.keySet()));
     }
 
     @Override
@@ -52,6 +52,39 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
     @Override
     public TimeSeries<T, V> get(K key) {
         return null;
+    }
+
+    @Override
+    public Iterator<Map.Entry<K, TimeSeries<T, V>>> iterator() {
+        return new Iterator<Map.Entry<K, TimeSeries<T, V>>>() {
+            private final Iterator<K> keys = keySet().iterator();
+
+            public boolean hasNext() {
+                return keys.hasNext();
+            }
+
+            @Override
+            public Map.Entry<K, TimeSeries<T, V>> next() {
+                final K key = keys.next();
+                final TimeSeries<T, V> value = get(key);
+                return new Map.Entry<K, TimeSeries<T, V>>() {
+                    @Override
+                    public K getKey() {
+                        return key;
+                    }
+
+                    @Override
+                    public TimeSeries<T, V> getValue() {
+                        return value;
+                    }
+
+                    @Override
+                    public TimeSeries<T, V> setValue(TimeSeries<T, V> value) {
+                        throw new UnsupportedOperationException("TimeSeriesCollection is immutable");
+                    }
+                };
+            }
+        };
     }
 
     private static <K, V> V getWithPutIfAbsent(final ConcurrentMap<K, V> map, final K key, final Function<Void, V> func) {
@@ -73,9 +106,9 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
         private final ConcurrentMap<K, ConcurrentMap<T, V>> state = new ConcurrentHashMap<>();
 
         public Builder<K, T, V> addValue(K key, T x, V y) {
-            if (key == null) throw new IllegalArgumentException("key value cannot be null");
-            if (x == null) throw new IllegalArgumentException("x value cannot be null");
-            if (y == null) throw new IllegalArgumentException("y value cannot be null");
+            if (key == null) throw new NullPointerException("key value cannot be null");
+            if (x == null) throw new NullPointerException("x value cannot be null");
+            if (y == null) throw new NullPointerException("y value cannot be null");
             final ConcurrentMap<T, V> values = getWithPutIfAbsent(state, key, (v) -> new ConcurrentHashMap<>());
             values.put(x, y);
             return this;

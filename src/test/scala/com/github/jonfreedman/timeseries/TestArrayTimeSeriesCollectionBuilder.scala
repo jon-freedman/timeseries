@@ -16,15 +16,15 @@ class TestArrayTimeSeriesCollectionBuilder {
     new Builder[String, LocalDate, Double].build(new ZeroValueInterpolator[Double](0d), LocalDateTraverser.factory())
   }
 
-  @Test(expected = classOf[IllegalArgumentException]) def cannotAddNullKey() {
+  @Test(expected = classOf[NullPointerException]) def cannotAddNullKey() {
     new Builder[String, LocalDate, Double].addValue(null, LocalDate.of(2015, 4, 5), 1)
   }
 
-  @Test(expected = classOf[IllegalArgumentException]) def cannotAddNullTimeValue() {
+  @Test(expected = classOf[NullPointerException]) def cannotAddNullTimeValue() {
     new Builder[String, LocalDate, Double].addValue("foo", null, 1)
   }
 
-  @Test(expected = classOf[IllegalArgumentException]) def cannotAddNullValue() {
+  @Test(expected = classOf[NullPointerException]) def cannotAddNullValue() {
     new Builder[String, LocalDate, lang.Double].addValue("foo", LocalDate.of(2015, 4, 5), null)
   }
 }
