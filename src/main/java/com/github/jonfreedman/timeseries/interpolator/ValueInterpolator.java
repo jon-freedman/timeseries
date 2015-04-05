@@ -16,5 +16,5 @@ public interface ValueInterpolator<V> {
      * @param nextY y value for nextX
      * @return Interpolated y value for x
      */
-    public V getY(final int x, final int prevX, final V prevY, final int nextX, final V nextY);
+    V getY(final int x, final int prevX, final V prevY, final int nextX, final V nextY);
 }

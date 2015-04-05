@@ -45,15 +45,67 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
 
     @Override
     public T maxValue() {
-        return getWithPutIfAbsent(timeLookup, maxIndex, (v) -> {
-            final Traverser<T> traverser = traverserFactory.apply(initialTimeValue);
-            return traverser.skip(maxIndex - 1);
-        });
+        return getTimeValue(maxIndex);
     }
 
     @Override
     public TimeSeries<T, V> get(K key) {
-        return null;
+        return new TimeSeries<T, V>() {
+            private final V[] values = ArrayTimeSeriesCollection.this.values.get(key);
+
+            @Override
+            public Iterator<Map.Entry<T, V>> timeValueIterator() {
+                return new Iterator<Map.Entry<T, V>>() {
+                    private volatile int index = 0;
+
+                    public boolean hasNext() {
+                        return index < values.length;
+                    }
+
+                    @Override
+                    public Map.Entry<T, V> next() {
+                        final int i = index++;
+                        return new Map.Entry<T, V>() {
+                            @Override
+                            public T getKey() {
+                                return getTimeValue(i);
+                            }
+
+                            @Override
+                            public V getValue() {
+                                return values[i];
+                            }
+
+                            @Override
+                            public V setValue(V value) {
+                                throw new UnsupportedOperationException("TimeSeries is immutable");
+                            }
+
+                            @Override
+                            public String toString() {
+                                return String.format("%s -> %s", getKey(), getValue());
+                            }
+                        };
+                    }
+                };
+            }
+
+            @Override
+            public Iterator<V> ordinalIterator() {
+                return new Iterator<V>() {
+                    private volatile int index = 0;
+
+                    public boolean hasNext() {
+                        return index < values.length;
+                    }
+
+                    @Override
+                    public V next() {
+                        return values[index++];
+                    }
+                };
+            }
+        };
     }
 
     @Override
@@ -87,6 +139,13 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
                 };
             }
         };
+    }
+
+    private T getTimeValue(final int i) {
+        return getWithPutIfAbsent(timeLookup, i, (v) -> {
+            final Traverser<T> traverser = traverserFactory.apply(initialTimeValue);
+            return traverser.skip(i - 1);
+        });
     }
 
     private static <K, V> V getWithPutIfAbsent(final ConcurrentMap<K, V> map, final K key, final Function<Void, V> func) {

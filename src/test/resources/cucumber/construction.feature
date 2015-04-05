@@ -17,3 +17,17 @@ Feature: Construction
     And value for key 'bar' of ('2014-01-26' -> 2)
     Then keys contains 'foo'
     And keys contains 'bar'
+
+  Scenario: TimeSeriesCollection can be iterated
+    Given a LocalDate ArrayTimeSeriesCollection with start date '2014-01-26' and end date '2014-01-28'
+    And value for key 'foo' of ('2014-01-26' -> 1)
+    And value for key 'foo' of ('2014-01-27' -> 2)
+    And value for key 'foo' of ('2014-01-28' -> 3)
+    Then TimeSeries for key 'foo' contains [1, 2, 3]
+
+  Scenario: TimeSeriesCollection can be iterated with time values
+    Given a LocalDate ArrayTimeSeriesCollection with start date '2014-01-26' and end date '2014-01-28'
+    And value for key 'foo' of ('2014-01-26' -> 1)
+    And value for key 'foo' of ('2014-01-27' -> 2)
+    And value for key 'foo' of ('2014-01-28' -> 3)
+    Then TimeSeries for key 'foo' contains values [1, 2, 3] and timeValues ['2014-01-26', '2014-01-27', '2014-01-28']

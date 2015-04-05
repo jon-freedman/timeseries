@@ -7,11 +7,11 @@ import java.util.SortedSet;
  * @author jon
  */
 public interface TimeSeriesCollection<K extends Comparable<K>, T extends Comparable<? super T>, V> extends Iterable<Map.Entry<K, TimeSeries<T, V>>> {
-    public SortedSet<K> keySet();
+    SortedSet<K> keySet();
 
-    public T minValue();
+    T minValue();
 
-    public T maxValue();
+    T maxValue();
 
-    public TimeSeries<T, V> get(final K key);
+    TimeSeries<T, V> get(final K key);
 }

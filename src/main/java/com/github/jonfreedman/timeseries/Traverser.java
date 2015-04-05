@@ -11,7 +11,7 @@ public interface Traverser<T extends Comparable<? super T>> {
      *
      * @return Next value after traversing
      */
-    public T next();
+    T next();
 
     /**
      * Allows traversal of sparsely populated sequences, traverses to the nth next value based on the natural ordering of T
@@ -21,5 +21,5 @@ public interface Traverser<T extends Comparable<? super T>> {
      * @param n Values to skip, must be >= 0
      * @return Next value after skipping n values and traversing
      */
-    public T skip(final int n);
+    T skip(final int n);
 }
