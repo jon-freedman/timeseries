@@ -58,6 +58,7 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
                 return new Iterator<Map.Entry<T, V>>() {
                     private volatile int index = 0;
 
+                    @Override
                     public boolean hasNext() {
                         return index < values.length;
                     }
@@ -95,6 +96,7 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
                 return new Iterator<V>() {
                     private volatile int index = 0;
 
+                    @Override
                     public boolean hasNext() {
                         return index < values.length;
                     }
@@ -113,6 +115,7 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
         return new Iterator<Map.Entry<K, TimeSeries<T, V>>>() {
             private final Iterator<K> keys = keySet().iterator();
 
+            @Override
             public boolean hasNext() {
                 return keys.hasNext();
             }
