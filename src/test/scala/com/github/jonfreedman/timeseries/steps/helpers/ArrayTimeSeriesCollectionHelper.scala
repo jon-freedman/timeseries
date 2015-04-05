@@ -1,14 +1,14 @@
 package com.github.jonfreedman.timeseries.steps.helpers
 
+import java.lang
 import java.time.LocalDate
-import java.{lang, util}
 
+import com.github.jonfreedman.timeseries.ArrayTimeSeriesCollection
 import com.github.jonfreedman.timeseries.ArrayTimeSeriesCollection.Builder
 import com.github.jonfreedman.timeseries.interpolator.FlatFillInterpolator.Direction
 import com.github.jonfreedman.timeseries.interpolator.{FlatFillInterpolator, ValueInterpolator}
 import com.github.jonfreedman.timeseries.localdate.LocalDateTraverser
 import com.github.jonfreedman.timeseries.steps.helpers.ArrayTimeSeriesCollectionHelper.LocalDateCollectionBuilder
-import com.github.jonfreedman.timeseries.{ArrayTimeSeriesCollection, Traverser}
 import cucumber.runtime.java.guice.ScenarioScoped
 
 /**
@@ -39,9 +39,7 @@ object ArrayTimeSeriesCollectionHelper {
       } {
         builder.addValue(key, date, value)
       }
-      builder.build(interpolator, new util.function.Function[LocalDate, Traverser[LocalDate]] {
-        override def apply(d: LocalDate): Traverser[LocalDate] = new LocalDateTraverser(d)
-      })
+      builder.build(interpolator, LocalDateTraverser.factory())
     }
   }
 

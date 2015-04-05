@@ -73,6 +73,9 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
         private final ConcurrentMap<K, ConcurrentMap<T, V>> state = new ConcurrentHashMap<>();
 
         public Builder<K, T, V> addValue(K key, T x, V y) {
+            if (key == null) throw new IllegalArgumentException("key value cannot be null");
+            if (x == null) throw new IllegalArgumentException("x value cannot be null");
+            if (y == null) throw new IllegalArgumentException("y value cannot be null");
             final ConcurrentMap<T, V> values = getWithPutIfAbsent(state, key, (v) -> new ConcurrentHashMap<>());
             values.put(x, y);
             return this;
@@ -145,7 +148,7 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
             // convert to arrays and build
             final Map<K, V[]> arrayValues = new HashMap<>();
             for (final Map.Entry<K, SortedMap<Integer, V>> entry : values.entrySet()) {
-                //noinspection unchecked
+                //noinspection unchecked,ConstantConditions
                 final V[] array = (V[]) Array.newInstance(sampleValue.getClass(), timeValues.size());
                 arrayValues.put(entry.getKey(), entry.getValue().values().toArray(array));
             }
