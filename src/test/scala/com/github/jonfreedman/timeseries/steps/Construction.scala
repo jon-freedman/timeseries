@@ -7,6 +7,7 @@ import com.github.jonfreedman.timeseries.steps.helpers.ArrayTimeSeriesCollection
 import com.github.jonfreedman.timeseries.steps.helpers.ArrayTimeSeriesCollectionHelper.LocalDateCollectionBuilder
 import com.google.inject.Inject
 import cucumber.api.java.en._
+import org.hamcrest.Matchers._
 import org.junit.Assert._
 
 /**
@@ -31,5 +32,10 @@ class Construction @Inject()(helper: ArrayTimeSeriesCollectionHelper) {
   @Then( """the max date is '(\d{4}-\d{2}-\d{2})'""")
   def checkMaxDate(d: String) {
     assertEquals(LocalDate.parse(d, DateTimeFormatter.ofPattern("yyyy-MM-dd")), helper.collection.maxValue())
+  }
+
+  @Then( """keys contains '([a-z]+)'""")
+  def containsKey(k: String) {
+    assertThat(helper.collection.keySet(), hasItem(k))
   }
 }

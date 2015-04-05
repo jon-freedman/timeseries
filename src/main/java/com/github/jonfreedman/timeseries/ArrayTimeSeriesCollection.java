@@ -99,16 +99,16 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
             for (final K key : state.keySet()) {
                 values.put(key, new TreeMap<>());
             }
-            while (timeValue.compareTo(maxTimeValue) < 0) {
+            while (timeValue.compareTo(maxTimeValue) <= 0) {
                 for (final Map.Entry<K, ConcurrentMap<T, V>> entry : state.entrySet()) {
                     final V val = entry.getValue().get(timeValue);
                     if (val != null) {
                         values.get(entry.getKey()).put(x, val);
                     }
                 }
+                timeValues.add(timeValue);
                 ++x;
                 timeValue = traverser.next();
-                timeValues.add(timeValue);
             }
 
             // fill in any missing values
@@ -131,7 +131,7 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
                             final int prevX = headMap.lastKey();
                             final V prevY = ts.get(prevX);
                             ts.put(i, interpolator.getY(i, prevX, prevY, 0, null));
-                        } else {
+                        } else if (!tailKeys.isEmpty()) {
                             final int nextX = tailKeys.first();
                             final V nextY = ts.get(nextX);
                             ts.put(i, interpolator.getY(i, 0, null, nextX, nextY));

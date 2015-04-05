@@ -4,14 +4,12 @@ import java.time.LocalDate
 import java.{lang, util}
 
 import com.github.jonfreedman.timeseries.ArrayTimeSeriesCollection.Builder
-import com.github.jonfreedman.timeseries.interpolator.FlatFillInterpolator
 import com.github.jonfreedman.timeseries.interpolator.FlatFillInterpolator.Direction
+import com.github.jonfreedman.timeseries.interpolator.{FlatFillInterpolator, ValueInterpolator}
 import com.github.jonfreedman.timeseries.localdate.LocalDateTraverser
 import com.github.jonfreedman.timeseries.steps.helpers.ArrayTimeSeriesCollectionHelper.LocalDateCollectionBuilder
 import com.github.jonfreedman.timeseries.{ArrayTimeSeriesCollection, Traverser}
 import cucumber.runtime.java.guice.ScenarioScoped
-
-import scala.collection.mutable
 
 /**
  * @author jon
@@ -24,13 +22,14 @@ import scala.collection.mutable
 
 object ArrayTimeSeriesCollectionHelper {
 
-  class LocalDateCollectionBuilder(first: LocalDate, last: LocalDate) {
-    private val values: mutable.Map[String, mutable.Map[LocalDate, lang.Double]] = new mutable.HashMap
+  class LocalDateCollectionBuilder(first: LocalDate, last: LocalDate,
+                                   values: Map[String, Map[LocalDate, lang.Double]] = Map.empty,
+                                   interpolator: ValueInterpolator[lang.Double] = new FlatFillInterpolator[lang.Double](Direction.forward)) {
+    def addValue(key: String, date: LocalDate, value: Double): LocalDateCollectionBuilder =
+      new LocalDateCollectionBuilder(first, last, values.updated(key, values.getOrElse(key, Map.empty).updated(date, Double.box(value))), interpolator)
 
-    def addValue(key: String, date: LocalDate, value: Double): LocalDateCollectionBuilder = {
-      values.getOrElseUpdate(key, new mutable.HashMap[LocalDate, lang.Double]).put(date, value)
-      this
-    }
+    def withInterpolator(interpolator: ValueInterpolator[lang.Double]): LocalDateCollectionBuilder =
+      new LocalDateCollectionBuilder(first, last, values, interpolator)
 
     private[ArrayTimeSeriesCollectionHelper] def build(): ArrayTimeSeriesCollection[String, LocalDate, lang.Double] = {
       val builder = new Builder[String, LocalDate, lang.Double]
@@ -40,7 +39,7 @@ object ArrayTimeSeriesCollectionHelper {
       } {
         builder.addValue(key, date, value)
       }
-      builder.build(new FlatFillInterpolator[lang.Double](Direction.forward), new util.function.Function[LocalDate, Traverser[LocalDate]] {
+      builder.build(interpolator, new util.function.Function[LocalDate, Traverser[LocalDate]] {
         override def apply(d: LocalDate): Traverser[LocalDate] = new LocalDateTraverser(d)
       })
     }
