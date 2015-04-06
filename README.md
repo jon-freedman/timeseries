@@ -1,5 +1,6 @@
-# timeseries
+# Java Timeseries API
 
+A performant API to facilitate common operations across multiple time series often used in financial applications.
 
 Useful links
 ------------
