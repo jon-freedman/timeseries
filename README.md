@@ -4,6 +4,7 @@ A performant API to facilitate common operations across multiple time series oft
 
 [![Build Status](https://travis-ci.org/jonfreedman/timeseries.svg?branch=master)](https://travis-ci.org/jonfreedman/timeseries)
 [![Coverage Status](https://coveralls.io/repos/jonfreedman/timeseries/badge.svg?branch=master)](https://coveralls.io/r/jonfreedman/timeseries)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.jonfreedman/timeseries/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.jonfreedman/timeseries)
 
 Useful links
 ------------
