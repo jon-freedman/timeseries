@@ -1,5 +1,7 @@
 package com.github.jonfreedman.timeseries;
 
+import com.github.jonfreedman.timeseries.calculation.NonTemporalCalculator;
+import com.github.jonfreedman.timeseries.calculation.TemporalCalculator;
 import com.github.jonfreedman.timeseries.interpolator.ValueInterpolator;
 
 import java.lang.reflect.Array;
@@ -142,6 +144,20 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
                 };
             }
         };
+    }
+
+    @Override
+    public void calculate(Collection<NonTemporalCalculator<K, ? super V, ?>> nonTemporalCalculators, Collection<TemporalCalculator<K, T, ? super V, ?>> temporalCalculators) {
+        for (int i = 0; i <= maxIndex; ++i) {
+            for (final K key : keys) {
+                for (final NonTemporalCalculator<K, ? super V, ?> calc : nonTemporalCalculators) {
+                    calc.observation(key, values.get(key)[i]);
+                }
+                for (final TemporalCalculator<K, T, ? super V, ?> calc : temporalCalculators) {
+                    calc.observation(key, getTimeValue(i), values.get(key)[i]);
+                }
+            }
+        }
     }
 
     private T getTimeValue(final int i) {
