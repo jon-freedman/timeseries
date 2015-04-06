@@ -3,7 +3,7 @@
 A performant API to facilitate common operations across multiple time series often used in financial applications.
 
 [![Build Status](https://travis-ci.org/jonfreedman/timeseries.svg?branch=master)](https://travis-ci.org/jonfreedman/timeseries)
-[![Coverage Status](https://coveralls.io/repos/jonfreedman/timeseries/badge.svg)](https://coveralls.io/r/jonfreedman/timeseries)
+[![Coverage Status](https://coveralls.io/repos/jonfreedman/timeseries/badge.svg?branch=master)](https://coveralls.io/r/jonfreedman/timeseries)
 
 Useful links
 ------------
