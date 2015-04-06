@@ -4,6 +4,8 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.{lang, util}
 
+import com.github.jonfreedman.timeseries.interpolator.ZeroValueInterpolator
+import com.github.jonfreedman.timeseries.localdate.WeekdayLocalDateTraverser
 import com.github.jonfreedman.timeseries.steps.helpers.ArrayTimeSeriesCollectionHelper
 import com.github.jonfreedman.timeseries.steps.helpers.ArrayTimeSeriesCollectionHelper.LocalDateCollectionBuilder
 import com.google.common.collect._
@@ -22,6 +24,16 @@ class Construction @Inject()(helper: ArrayTimeSeriesCollectionHelper) {
   @Given( """a LocalDate ArrayTimeSeriesCollection with start date '(\d{4}-\d{2}-\d{2})' and end date '(\d{4}-\d{2}-\d{2})'""")
   def createLocalDateTimeSeriesCollection(s: String, e: String) {
     helper.builder = new LocalDateCollectionBuilder(LocalDate.parse(s, DateTimeFormatter.ofPattern("yyyy-MM-dd")), LocalDate.parse(e, DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+  }
+
+  @Given("collection uses zero value interpolation")
+  def useZeroValueInterpolation() {
+    helper.builder = helper.builder.withInterpolator(new ZeroValueInterpolator(0d))
+  }
+
+  @Given("collection uses weekday traversal")
+  def useWeekdayTraversal() {
+    helper.builder = helper.builder.withTraverser(WeekdayLocalDateTraverser.factory())
   }
 
   @Given( """value for key '([a-z]+)' of \('(\d{4}-\d{2}-\d{2})' -> (\d+(?:\.\d+)?)\)""")

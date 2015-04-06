@@ -16,6 +16,11 @@ public class LocalDateTraverser implements Traverser<LocalDate> {
     }
 
     @Override
+    public boolean canStartFrom(LocalDate initialValue) {
+        return true;
+    }
+
+    @Override
     public LocalDate next() {
         current = current.plusDays(1);
         return current;

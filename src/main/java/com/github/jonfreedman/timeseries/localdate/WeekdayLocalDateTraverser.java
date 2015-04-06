@@ -6,9 +6,8 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAdjuster;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -19,15 +18,11 @@ import static java.time.temporal.ChronoUnit.DAYS;
  * @author jon
  */
 public class WeekdayLocalDateTraverser implements Traverser<LocalDate> {
-    private static final Set<DayOfWeek> WESTERN_WEEKEND = new HashSet<>();
+    private static final EnumSet<DayOfWeek> WESTERN_WEEKEND = EnumSet.of(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY);
 
-    static {
-        WESTERN_WEEKEND.add(DayOfWeek.SATURDAY);
-        WESTERN_WEEKEND.add(DayOfWeek.SUNDAY);
-    }
-
+    private final EnumSet<DayOfWeek> weekend;
     private final Adjuster weekendAdjuster;
-    private final int weekendLength;
+    private final int numberOfWeekdays;
 
     private LocalDate current;
 
@@ -35,10 +30,16 @@ public class WeekdayLocalDateTraverser implements Traverser<LocalDate> {
         this(initial, WESTERN_WEEKEND);
     }
 
-    public WeekdayLocalDateTraverser(final LocalDate initial, final Set<DayOfWeek> weekend) {
-        current = initial;
-        weekendAdjuster = new Adjuster(weekend);
-        weekendLength = weekend.size();
+    public WeekdayLocalDateTraverser(final LocalDate initial, final EnumSet<DayOfWeek> weekend) {
+        this.current = initial;
+        this.weekend = weekend;
+        this.weekendAdjuster = new Adjuster(weekend);
+        this.numberOfWeekdays = 7 - weekend.size();
+    }
+
+    @Override
+    public boolean canStartFrom(final LocalDate initialValue) {
+        return !weekend.contains(initialValue.getDayOfWeek());
     }
 
     @Override
@@ -48,9 +49,14 @@ public class WeekdayLocalDateTraverser implements Traverser<LocalDate> {
     }
 
     @Override
-    public LocalDate skip(int n) {
-        final int weekends = (int) Math.ceil(n / (7d - weekendLength));
-        current = current.plusDays(n + (weekends * weekendLength)).with(weekendAdjuster);
+    public LocalDate skip(final int n) {
+        final int remainder = (n + 1) % numberOfWeekdays;
+        LocalDate rolled = current;
+        for (int i = 0; i < remainder; ++i) {
+            rolled = rolled.with(weekendAdjuster);
+        }
+        final int fullWeeks = (n + 1) / numberOfWeekdays;
+        current = rolled.plusDays(fullWeeks * 7);
         return current;
     }
 
@@ -59,10 +65,10 @@ public class WeekdayLocalDateTraverser implements Traverser<LocalDate> {
     }
 
     private static class Adjuster implements TemporalAdjuster {
-        private final Map<DayOfWeek, Integer> skips;
+        private final EnumMap<DayOfWeek, Integer> skips;
 
         public Adjuster(final Set<DayOfWeek> weekend) {
-            final Map<DayOfWeek, Integer> skips = new HashMap<>();
+            final EnumMap<DayOfWeek, Integer> skips = new EnumMap<>(DayOfWeek.class);
             for (final DayOfWeek dow : DayOfWeek.values()) {
                 int skip = 0;
                 DayOfWeek skipped = dow;

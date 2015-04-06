@@ -5,7 +5,7 @@ import java.time.LocalDate
 
 import com.github.jonfreedman.timeseries.ArrayTimeSeriesCollection.Builder
 import com.github.jonfreedman.timeseries.interpolator.ZeroValueInterpolator
-import com.github.jonfreedman.timeseries.localdate.LocalDateTraverser
+import com.github.jonfreedman.timeseries.localdate.{LocalDateTraverser, WeekdayLocalDateTraverser}
 import org.junit.Test
 
 /**
@@ -26,5 +26,35 @@ class TestArrayTimeSeriesCollectionBuilder {
 
   @Test(expected = classOf[NullPointerException]) def cannotAddNullValue() {
     new Builder[String, LocalDate, lang.Double].addValue("foo", LocalDate.of(2015, 4, 5), null)
+  }
+
+  @Test(expected = classOf[IllegalArgumentException]) def cannotInsertSingleInvalidValue() {
+    new Builder[String, LocalDate, Double]
+      .addValue("foo", LocalDate.of(2015, 4, 5), 1)
+      .build(new ZeroValueInterpolator[Double](0d), WeekdayLocalDateTraverser.factory())
+  }
+
+  @Test(expected = classOf[IllegalArgumentException]) def cannotStartWithInvalidValue() {
+    new Builder[String, LocalDate, Double]
+      .addValue("foo", LocalDate.of(2015, 4, 5), 0)
+      .addValue("foo", LocalDate.of(2015, 4, 6), 1)
+      .build(new ZeroValueInterpolator[Double](0d), WeekdayLocalDateTraverser.factory())
+  }
+
+  @Test(expected = classOf[IllegalArgumentException]) def cannotEndWithInvalidValue() {
+    new Builder[String, LocalDate, Double]
+      .addValue("foo", LocalDate.of(2015, 4, 3), 1)
+      .addValue("foo", LocalDate.of(2015, 4, 4), 0)
+      .build(new ZeroValueInterpolator[Double](0d), WeekdayLocalDateTraverser.factory())
+  }
+
+  @Test(expected = classOf[IllegalArgumentException]) def cannotInsertInvalidValues() {
+    new Builder[String, LocalDate, Double]
+      .addValue("foo", LocalDate.of(2015, 4, 2), 1)
+      .addValue("foo", LocalDate.of(2015, 4, 3), 1)
+      .addValue("foo", LocalDate.of(2015, 4, 4), 0)
+      .addValue("foo", LocalDate.of(2015, 4, 5), 0)
+      .addValue("foo", LocalDate.of(2015, 4, 6), 1)
+      .build(new ZeroValueInterpolator[Double](0d), WeekdayLocalDateTraverser.factory())
   }
 }

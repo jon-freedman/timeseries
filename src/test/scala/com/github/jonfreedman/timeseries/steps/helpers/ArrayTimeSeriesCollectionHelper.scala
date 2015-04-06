@@ -1,14 +1,14 @@
 package com.github.jonfreedman.timeseries.steps.helpers
 
-import java.lang
 import java.time.LocalDate
+import java.{lang, util}
 
-import com.github.jonfreedman.timeseries.ArrayTimeSeriesCollection
 import com.github.jonfreedman.timeseries.ArrayTimeSeriesCollection.Builder
 import com.github.jonfreedman.timeseries.interpolator.FlatFillInterpolator.Direction
 import com.github.jonfreedman.timeseries.interpolator.{FlatFillInterpolator, ValueInterpolator}
 import com.github.jonfreedman.timeseries.localdate.LocalDateTraverser
 import com.github.jonfreedman.timeseries.steps.helpers.ArrayTimeSeriesCollectionHelper.LocalDateCollectionBuilder
+import com.github.jonfreedman.timeseries.{ArrayTimeSeriesCollection, Traverser}
 import cucumber.runtime.java.guice.ScenarioScoped
 
 /**
@@ -23,14 +23,17 @@ import cucumber.runtime.java.guice.ScenarioScoped
 object ArrayTimeSeriesCollectionHelper {
 
   class LocalDateCollectionBuilder(first: LocalDate, last: LocalDate, values: Map[String, Map[LocalDate, lang.Double]],
-                                   interpolator: ValueInterpolator[lang.Double]) {
-    def this(first: LocalDate, last: LocalDate) = this(first, last, Map.empty, new FlatFillInterpolator[lang.Double](Direction.forward))
+                                   interpolator: ValueInterpolator[lang.Double], traverser: util.function.Function[LocalDate, Traverser[LocalDate]]) {
+    def this(first: LocalDate, last: LocalDate) = this(first, last, Map.empty, new FlatFillInterpolator[lang.Double](Direction.forward), LocalDateTraverser.factory())
 
     def addValue(key: String, date: LocalDate, value: Double): LocalDateCollectionBuilder =
-      new LocalDateCollectionBuilder(first, last, values.updated(key, values.getOrElse(key, Map.empty).updated(date, Double.box(value))), interpolator)
+      new LocalDateCollectionBuilder(first, last, values.updated(key, values.getOrElse(key, Map.empty).updated(date, Double.box(value))), interpolator, traverser)
 
     def withInterpolator(interpolator: ValueInterpolator[lang.Double]): LocalDateCollectionBuilder =
-      new LocalDateCollectionBuilder(first, last, values, interpolator)
+      new LocalDateCollectionBuilder(first, last, values, interpolator, traverser)
+
+    def withTraverser(traverser: util.function.Function[LocalDate, Traverser[LocalDate]]): LocalDateCollectionBuilder =
+      new LocalDateCollectionBuilder(first, last, values, interpolator, traverser)
 
     def build(): ArrayTimeSeriesCollection[String, LocalDate, lang.Double] = {
       val builder = new Builder[String, LocalDate, lang.Double]
@@ -40,7 +43,7 @@ object ArrayTimeSeriesCollectionHelper {
       } {
         builder.addValue(key, date, value)
       }
-      builder.build(interpolator, LocalDateTraverser.factory())
+      builder.build(interpolator, traverser)
     }
   }
 

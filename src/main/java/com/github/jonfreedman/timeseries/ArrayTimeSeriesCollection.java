@@ -204,11 +204,16 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
             if (timeValues.isEmpty()) {
                 throw new IllegalStateException("Cannot construct an empty TimeSeriesCollection");
             }
+            final Set<T> originalTimeValues = new TreeSet<>(timeValues);
             final T minTimeValue = timeValues.first();
             final T maxTimeValue = timeValues.last();
 
             // prepare integer indexed data for interpolation
             final Traverser<T> traverser = traverserFactory.apply(minTimeValue);
+            if (!traverser.canStartFrom(minTimeValue)) {
+                throw new IllegalArgumentException("Cannot start with time value " + minTimeValue);
+            }
+
             T timeValue = minTimeValue;
             int x = 0;
             final Map<K, SortedMap<Integer, V>> values = new TreeMap<>();
@@ -223,8 +228,14 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
                     }
                 }
                 timeValues.add(timeValue);
+                originalTimeValues.remove(timeValue);
                 ++x;
                 timeValue = traverser.next();
+            }
+
+            // check for any unexpected time values
+            if (!originalTimeValues.isEmpty()) {
+                throw new IllegalArgumentException(String.format("Unexpected time values: [%s]", originalTimeValues));
             }
 
             // fill in any missing values
