@@ -1,6 +1,8 @@
 package com.github.jonfreedman.timeseries;
 
 import com.github.jonfreedman.timeseries.calculation.NonTemporalCalculator;
+import com.github.jonfreedman.timeseries.calculation.RelativeToNonTemporalCalculator;
+import com.github.jonfreedman.timeseries.calculation.RelativeToTemporalCalculator;
 import com.github.jonfreedman.timeseries.calculation.TemporalCalculator;
 import com.github.jonfreedman.timeseries.interpolator.ValueInterpolator;
 
@@ -146,8 +148,24 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
         };
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void calculate(Collection<NonTemporalCalculator<K, ? super V, ?>> nonTemporalCalculators, Collection<TemporalCalculator<K, T, ? super V, ?>> temporalCalculators) {
+        // find any relative calculators
+        final Collection<RelativeToNonTemporalCalculator<K, ? super V, ?>> relativeNonTemporal = new LinkedList<>();
+        for (final NonTemporalCalculator<K, ? super V, ?> calc : nonTemporalCalculators) {
+            if (calc instanceof RelativeToNonTemporalCalculator) {
+                relativeNonTemporal.add((RelativeToNonTemporalCalculator<K, ? super V, ?>) calc);
+            }
+        }
+        final Collection<RelativeToTemporalCalculator<K, T, ? super V, ?>> relativeTemporal = new LinkedList<>();
+        for (final TemporalCalculator<K, T, ? super V, ?> calc : temporalCalculators) {
+            if (calc instanceof RelativeToTemporalCalculator) {
+                relativeTemporal.add((RelativeToTemporalCalculator<K, T, ? super V, ?>) calc);
+            }
+        }
+
+        // traverse entire collection
         for (int i = 0; i <= maxIndex; ++i) {
             for (final K key : keys) {
                 for (final NonTemporalCalculator<K, ? super V, ?> calc : nonTemporalCalculators) {
@@ -156,6 +174,14 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
                 for (final TemporalCalculator<K, T, ? super V, ?> calc : temporalCalculators) {
                     calc.observation(key, getTimeValue(i), values.get(key)[i]);
                 }
+            }
+
+            // increment relative calculators
+            for (final RelativeToNonTemporalCalculator<K, ? super V, ?> calc : relativeNonTemporal) {
+                calc.incrementRelative();
+            }
+            for (final RelativeToTemporalCalculator<K, T, ? super V, ?> calc : relativeTemporal) {
+                calc.incrementRelative(getTimeValue(i));
             }
         }
     }
