@@ -53,7 +53,7 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
         if (filteredValues.keySet().equals(keys)) {
             return this;
         }
-        return new ArrayTimeSeriesCollection<K, T, V>(initialTimeValue, traverserFactory, filteredValues);
+        return new ArrayTimeSeriesCollection<>(initialTimeValue, traverserFactory, filteredValues);
     }
 
     @Override
