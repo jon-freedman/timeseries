@@ -56,6 +56,11 @@ class Construction @Inject()(helper: ArrayTimeSeriesCollectionHelper) {
     assertThat(helper.collection.keySet(), hasItem(k))
   }
 
+  @Then( """length is '(\d+)'""")
+  def lengthIs(l: Int) {
+    assertEquals(l, helper.collection.length())
+  }
+
   @Then( """TimeSeries for key '([a-z]+)' contains \[(\d+(?:\.\d+)?(?:, \d+(?:\.\d+)?)*)\]""")
   def timeSeriesContainsValueOnly(key: String, expected: util.List[lang.Double]) {
     assertThat(Lists.newArrayList(helper.collection.get(key).ordinalIterator()), contains(expected.asScala.toSeq: _*))

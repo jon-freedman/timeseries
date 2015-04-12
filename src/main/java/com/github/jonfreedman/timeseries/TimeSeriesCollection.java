@@ -31,6 +31,11 @@ public interface TimeSeriesCollection<K extends Comparable<K>, T extends Compara
     T maxValue();
 
     /**
+     * @return The number of distinct temporal values
+     */
+    int length();
+
+    /**
      * @param key Key value
      * @return {@link TimeSeries} for a given key
      */

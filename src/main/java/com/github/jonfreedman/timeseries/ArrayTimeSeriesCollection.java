@@ -53,6 +53,11 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
     }
 
     @Override
+    public int length() {
+        return maxIndex + 1;
+    }
+
+    @Override
     public TimeSeries<T, V> get(K key) {
         return new TimeSeries<T, V>() {
             private final V[] values = ArrayTimeSeriesCollection.this.values.get(key);
