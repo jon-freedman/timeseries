@@ -23,8 +23,12 @@ class TestArrayTimeSeriesCollectionFilter {
     .build(new ZeroValueInterpolator[Double](0d), LocalDateTraverser.factory())
 
   @Test def simpleFilter() {
-    assertThat(tsc.filter(Predicate.isEqual(key1)).keySet(), contains(key1))
-    assertThat(tsc.filter(Predicate.isEqual(key2)).keySet(), contains(key2))
+    assertThat(tsc.keySet(), containsInAnyOrder(key1, key2))
+    def filterCollection(key: String) {
+      assertThat(tsc.filter(Predicate.isEqual(key)).keySet(), contains(key))
+    }
+    filterCollection(key1)
+    filterCollection(key2)
   }
 
   @Test def filteringResultingInSameKeySetIsIdentityFunction() {
