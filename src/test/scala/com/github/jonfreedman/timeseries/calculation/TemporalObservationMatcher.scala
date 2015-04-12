@@ -6,7 +6,7 @@ import org.hamcrest.{Description, Matcher, TypeSafeMatcher}
 /**
  * @author jon
  */
-class TemporalObservationMatcher[CT >: T, T <: Comparable[CT], R] private(timeValueMatcher: Matcher[_ <: T], valueMatcher: Matcher[_ <: R]) extends TypeSafeMatcher[TemporalCalculator.Observation[T, R]] {
+class TemporalObservationMatcher[T, R] private(timeValueMatcher: Matcher[_ <: T], valueMatcher: Matcher[_ <: R])(implicit ev: T <:< Comparable[_ >: T]) extends TypeSafeMatcher[TemporalCalculator.Observation[T, R]] {
   override def matchesSafely(item: Observation[T, R]): Boolean = timeValueMatcher.matches(item.getTimeValue) && valueMatcher.matches(item.getValue)
 
   override def describeTo(description: Description): Unit = {
@@ -19,6 +19,6 @@ class TemporalObservationMatcher[CT >: T, T <: Comparable[CT], R] private(timeVa
 }
 
 object TemporalObservationMatcher {
-  def observation[CT >: T, T <: Comparable[CT], R](timeValueMatcher: Matcher[_ <: T], valueMatcher: Matcher[_ <: R]): TemporalObservationMatcher[CT, T, R] =
-    new TemporalObservationMatcher[CT, T, R](timeValueMatcher, valueMatcher)
+  def observation[T, R](timeValueMatcher: Matcher[_ <: T], valueMatcher: Matcher[_ <: R])(implicit ev: T <:< Comparable[_ >: T]): TemporalObservationMatcher[T, R] =
+    new TemporalObservationMatcher[T, R](timeValueMatcher, valueMatcher)
 }
