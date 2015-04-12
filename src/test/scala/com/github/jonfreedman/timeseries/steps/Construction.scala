@@ -56,7 +56,7 @@ class Construction @Inject()(helper: ArrayTimeSeriesCollectionHelper) {
     assertThat(helper.collection.keySet(), hasItem(k))
   }
 
-  @Then( """length is '(\d+)'""")
+  @Then( """length is (\d+)""")
   def lengthIs(l: Int) {
     assertEquals(l, helper.collection.length())
   }
