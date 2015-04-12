@@ -6,4 +6,6 @@ Feature: Calculation
     And value for key 'foo' of ('2014-01-27' -> 2)
     And value for key 'foo' of ('2014-01-28' -> 3)
     When sum is calculated
+    And max is calculated
     Then BigDecimal result for 'foo' is 6
+    And Observation result for 'foo' is ('2014-01-28' -> 3)

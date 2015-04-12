@@ -172,12 +172,13 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
 
         // traverse entire collection
         for (int i = 0; i <= maxIndex; ++i) {
+            final int currIndex = i;
             for (final K key : keys) {
                 for (final NonTemporalCalculator<K, ? super V, ?> calc : nonTemporalCalculators) {
-                    calc.observation(key, values.get(key)[i]);
+                    calc.observation(key, values.get(key)[currIndex]);
                 }
                 for (final TemporalCalculator<K, T, ? super V, ?> calc : temporalCalculators) {
-                    calc.observation(key, getTimeValue(i), values.get(key)[i]);
+                    calc.observation(key, () -> getTimeValue(currIndex), values.get(key)[currIndex]);
                 }
             }
 
@@ -186,7 +187,7 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
                 calc.incrementRelative();
             }
             for (final RelativeToTemporalCalculator<K, T, ? super V, ?> calc : relativeTemporal) {
-                calc.incrementRelative(getTimeValue(i));
+                calc.incrementRelative(getTimeValue(currIndex));
             }
         }
     }

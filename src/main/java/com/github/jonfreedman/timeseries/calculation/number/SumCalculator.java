@@ -1,4 +1,6 @@
-package com.github.jonfreedman.timeseries.calculation;
+package com.github.jonfreedman.timeseries.calculation.number;
+
+import com.github.jonfreedman.timeseries.calculation.NonTemporalCalculator;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -8,7 +10,7 @@ import java.util.Map;
  * @author jon
  */
 public class SumCalculator<K extends Comparable<K>> implements NonTemporalCalculator<K, Number, BigDecimal> {
-    private Map<K, BigDecimal> result = new HashMap<>();
+    private final Map<K, BigDecimal> result = new HashMap<>();
 
     @Override
     public void observation(K key, Number value) {
