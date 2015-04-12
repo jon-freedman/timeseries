@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.SortedSet;
+import java.util.function.Predicate;
 
 /**
  * @param <K> Key type
@@ -19,6 +20,12 @@ public interface TimeSeriesCollection<K extends Comparable<K>, T extends Compara
      * @return Key values present
      */
     SortedSet<K> keySet();
+
+    /**
+     * @param filter Filter to apply to keys
+     * @return New collection with subset of keys based on predicate, the {@link #length()} of the new collection is the same
+     */
+    TimeSeriesCollection<K, T, V> subset(final Predicate<K> filter);
 
     /**
      * @return Smallest temporal value

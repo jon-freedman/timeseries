@@ -11,6 +11,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * @author jon
@@ -23,8 +25,8 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
     private final T initialTimeValue;
     private final int maxIndex;
 
-    public ArrayTimeSeriesCollection(final T initialTimeValue, final Function<T, Traverser<T>> traverserFactory,
-                                     final Map<K, V[]> values) {
+    private ArrayTimeSeriesCollection(final T initialTimeValue, final Function<T, Traverser<T>> traverserFactory,
+                                      final Map<K, V[]> values) {
         this.initialTimeValue = initialTimeValue;
         this.traverserFactory = traverserFactory;
         this.keys = Collections.unmodifiableSortedSet(new TreeSet<>(values.keySet()));
@@ -40,6 +42,12 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
     @Override
     public SortedSet<K> keySet() {
         return keys;
+    }
+
+    @Override
+    public ArrayTimeSeriesCollection<K, T, V> subset(final Predicate<K> filter) {
+        final Map<K, V[]> filteredValues = values.entrySet().stream().filter(e -> filter.test(e.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return new ArrayTimeSeriesCollection<K, T, V>(initialTimeValue, traverserFactory, filteredValues);
     }
 
     @Override
@@ -122,7 +130,7 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
     @Override
     public Iterator<Map.Entry<K, TimeSeries<T, V>>> iterator() {
         return new Iterator<Map.Entry<K, TimeSeries<T, V>>>() {
-            private final Iterator<K> keys = keySet().iterator();
+            private final Iterator<K> keys = ArrayTimeSeriesCollection.this.keys.iterator();
 
             @Override
             public boolean hasNext() {

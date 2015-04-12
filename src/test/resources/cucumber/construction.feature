@@ -15,7 +15,8 @@ Feature: Construction
     Given a LocalDate ArrayTimeSeriesCollection
     And value for key 'foo' of ('2014-01-26' -> 1)
     And value for key 'bar' of ('2014-01-26' -> 2)
-    Then keys contains 'foo'
+    Then there are 2 keys
+    And keys contains 'foo'
     And keys contains 'bar'
 
   Scenario: TimeSeriesCollection can be iterated
@@ -38,3 +39,20 @@ Feature: Construction
     And value for key 'foo' of ('2014-01-27' -> 2)
     And value for key 'foo' of ('2014-01-28' -> 3)
     Then length is 3
+
+  Scenario Outline: TimeSeriesCollection can be subsetted
+    Given a LocalDate ArrayTimeSeriesCollection
+    And value for key 'foo' of ('2014-01-26' -> 1)
+    And value for key 'foo' of ('2014-01-27' -> 2)
+    And value for key 'foo' of ('2014-01-28' -> 3)
+    And value for key 'bar' of ('2014-01-26' -> -1)
+    And value for key 'bar' of ('2014-01-27' -> -2)
+    When collection is subsetted with keys = ['<key>']
+    Then there are 1 keys
+    And keys contains '<key>'
+    And length is 3
+
+  Examples:
+    | key |
+    | foo |
+    | bar |

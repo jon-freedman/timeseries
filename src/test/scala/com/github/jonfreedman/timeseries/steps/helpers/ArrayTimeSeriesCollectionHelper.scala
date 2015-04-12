@@ -1,6 +1,7 @@
 package com.github.jonfreedman.timeseries.steps.helpers
 
 import java.time.LocalDate
+import java.util.function.Supplier
 import java.{lang, util}
 
 import com.github.jonfreedman.timeseries.ArrayTimeSeriesCollection.Builder
@@ -17,7 +18,9 @@ import cucumber.runtime.java.guice.ScenarioScoped
 @ScenarioScoped class ArrayTimeSeriesCollectionHelper {
   var builder: LocalDateCollectionBuilder = _
 
-  lazy val collection: ArrayTimeSeriesCollection[String, LocalDate, lang.Double] = builder.build()
+  var collection: Supplier[ArrayTimeSeriesCollection[String, LocalDate, lang.Double]] = new Supplier[ArrayTimeSeriesCollection[String, LocalDate, lang.Double]] {
+    override def get(): ArrayTimeSeriesCollection[String, LocalDate, lang.Double] = builder.build()
+  }
 }
 
 object ArrayTimeSeriesCollectionHelper {

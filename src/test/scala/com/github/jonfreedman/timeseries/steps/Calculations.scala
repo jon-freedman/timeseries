@@ -22,23 +22,23 @@ class Calculations @Inject()(collectionHelper: ArrayTimeSeriesCollectionHelper, 
   @When("sum is calculated")
   def sum() {
     val calculator = new SumCalculator[String]
-    collectionHelper.collection.calculateNonTemporal(Seq[NonTemporalCalculator[String, _ >: lang.Double, _]](calculator).asJava)
+    collectionHelper.collection.get.calculateNonTemporal(Seq[NonTemporalCalculator[String, _ >: lang.Double, _]](calculator).asJava)
     calculationHelper.bigDecimalResult = calculator.results
   }
 
   @When("max is calculated")
   def max() {
     val calculator = new MaxValueCalculator[String, LocalDate, lang.Double]
-    collectionHelper.collection.calculateTemporal(Seq[TemporalCalculator[String, LocalDate, _ >: lang.Double, _]](calculator).asJava)
+    collectionHelper.collection.get.calculateTemporal(Seq[TemporalCalculator[String, LocalDate, _ >: lang.Double, _]](calculator).asJava)
     calculationHelper.observationResult = calculator.results
   }
 
-  @Then( """BigDecimal result for '([a-z]+)' is (\d+(?:\.\d+)?)""")
+  @Then( """BigDecimal result for '([a-z]+)' is (-?\d+(?:\.\d+)?)""")
   def doubleResult(key: String, result: math.BigDecimal) {
     assertThat(calculationHelper.bigDecimalResult.get(key), closeTo(result, math.BigDecimal.valueOf(1e-8d)))
   }
 
-  @Then( """Observation result for '([a-z]+)' is \('(\d{4}-\d{2}-\d{2})' -> (\d+(?:\.\d+)?)\)""")
+  @Then( """Observation result for '([a-z]+)' is \('(\d{4}-\d{2}-\d{2})' -> (-?\d+(?:\.\d+)?)\)""")
   def observationResult(key: String, timeValue: String, value: Double) {
     assertThat(calculationHelper.observationResult.get(key), observation(equalTo(LocalDate.parse(timeValue, DateTimeFormatter.ofPattern("yyyy-MM-dd"))), closeTo(value, 1e-8)))
   }
