@@ -43,10 +43,10 @@ class Construction @Inject()(helper: ArrayTimeSeriesCollectionHelper) {
     helper.builder = helper.builder.addValue(key, LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd")), value)
   }
 
-  @When( """collection is subsetted with keys = \[('[a-z]+'(?:, '[a-z]+')*)\]""")
+  @When( """collection is filtered with keys = \[('[a-z]+'(?:, '[a-z]+')*)\]""")
   def subset(keys: util.List[String]) {
     val keySet = keys.asScala.map(s => s.replace("'", "")).toSet
-    val tsc = helper.collection.get.subset(new Predicate[String] {
+    val tsc = helper.collection.get.filter(new Predicate[String] {
       override def test(t: String): Boolean = keySet.contains(t)
     })
     helper.collection = new Supplier[ArrayTimeSeriesCollection[String, LocalDate, lang.Double]] {

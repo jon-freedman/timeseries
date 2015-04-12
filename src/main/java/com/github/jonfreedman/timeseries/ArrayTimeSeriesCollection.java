@@ -45,8 +45,14 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
     }
 
     @Override
-    public ArrayTimeSeriesCollection<K, T, V> subset(final Predicate<K> filter) {
+    public ArrayTimeSeriesCollection<K, T, V> filter(final Predicate<K> filter) {
         final Map<K, V[]> filteredValues = values.entrySet().stream().filter(e -> filter.test(e.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        if (filteredValues.keySet().isEmpty()) {
+            throw new IllegalArgumentException("Cannot apply filter as no keys matched");
+        }
+        if (filteredValues.keySet().equals(keys)) {
+            return this;
+        }
         return new ArrayTimeSeriesCollection<K, T, V>(initialTimeValue, traverserFactory, filteredValues);
     }
 

@@ -40,14 +40,14 @@ Feature: Construction
     And value for key 'foo' of ('2014-01-28' -> 3)
     Then length is 3
 
-  Scenario Outline: TimeSeriesCollection can be subsetted
+  Scenario Outline: TimeSeriesCollection can be filtered
     Given a LocalDate ArrayTimeSeriesCollection
     And value for key 'foo' of ('2014-01-26' -> 1)
     And value for key 'foo' of ('2014-01-27' -> 2)
     And value for key 'foo' of ('2014-01-28' -> 3)
     And value for key 'bar' of ('2014-01-26' -> -1)
     And value for key 'bar' of ('2014-01-27' -> -2)
-    When collection is subsetted with keys = ['<key>']
+    When collection is filtered with keys = ['<key>']
     Then there are 1 keys
     And keys contains '<key>'
     And length is 3

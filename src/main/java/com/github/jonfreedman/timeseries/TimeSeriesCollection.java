@@ -23,9 +23,9 @@ public interface TimeSeriesCollection<K extends Comparable<K>, T extends Compara
 
     /**
      * @param filter Filter to apply to keys
-     * @return New collection with subset of keys based on predicate, the {@link #length()} of the new collection is the same
+     * @return New collection with filter of keys based on predicate, the {@link #length()} of the new collection is the same
      */
-    TimeSeriesCollection<K, T, V> subset(final Predicate<K> filter);
+    TimeSeriesCollection<K, T, V> filter(final Predicate<K> filter);
 
     /**
      * @return Smallest temporal value
