@@ -22,6 +22,11 @@ class TestArrayTimeSeriesCollectionFilter {
     .addValue(key2, timeValue, 2d)
     .build(new ZeroValueInterpolator[Double](0d), LocalDateTraverser.factory())
 
+  @Test def simpleFilter() {
+    assertThat(tsc.filter(Predicate.isEqual(key1)).keySet(), contains(key1))
+    assertThat(tsc.filter(Predicate.isEqual(key2)).keySet(), contains(key2))
+  }
+
   @Test def filteringResultingInSameKeySetIsIdentityFunction() {
     assertThat(tsc, equalTo(tsc.filter(new Predicate[String] {
       override def test(t: String): Boolean = true

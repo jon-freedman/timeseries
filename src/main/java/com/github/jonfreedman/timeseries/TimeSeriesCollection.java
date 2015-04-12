@@ -73,6 +73,4 @@ public interface TimeSeriesCollection<K extends Comparable<K>, T extends Compara
      * @param temporalCalculators    Temporal calculations to perform
      */
     void calculate(final Collection<NonTemporalCalculator<K, ? super V, ?>> nonTemporalCalculators, final Collection<TemporalCalculator<K, T, ? super V, ?>> temporalCalculators);
-
-
 }

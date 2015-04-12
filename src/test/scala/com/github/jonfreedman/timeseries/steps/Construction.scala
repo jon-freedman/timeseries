@@ -96,6 +96,5 @@ class Construction @Inject()(helper: ArrayTimeSeriesCollectionHelper) {
     val expected = (expectedTimeValues.asScala.map(LocalDate.parse(_, DateTimeFormatter.ofPattern("''yyyy-MM-dd''"))) zip expectedValues.asScala).map { case (k, v) => Entry(k, v) }
     assertThat(actual.entrySet, contains[util.Map.Entry[LocalDate, lang.Double]](expected.toSeq: _*))
     assertEquals("Extra items found", actual.size, expected.size)
-
   }
 }

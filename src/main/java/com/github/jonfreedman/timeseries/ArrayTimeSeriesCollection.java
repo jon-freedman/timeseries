@@ -171,18 +171,16 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
     @Override
     public void calculate(Collection<NonTemporalCalculator<K, ? super V, ?>> nonTemporalCalculators, Collection<TemporalCalculator<K, T, ? super V, ?>> temporalCalculators) {
         // find any relative calculators
-        final Collection<RelativeToNonTemporalCalculator<K, ? super V, ?>> relativeNonTemporal = new LinkedList<>();
-        for (final NonTemporalCalculator<K, ? super V, ?> calc : nonTemporalCalculators) {
-            if (calc instanceof RelativeToNonTemporalCalculator) {
-                relativeNonTemporal.add((RelativeToNonTemporalCalculator<K, ? super V, ?>) calc);
-            }
-        }
-        final Collection<RelativeToTemporalCalculator<K, T, ? super V, ?>> relativeTemporal = new LinkedList<>();
-        for (final TemporalCalculator<K, T, ? super V, ?> calc : temporalCalculators) {
-            if (calc instanceof RelativeToTemporalCalculator) {
-                relativeTemporal.add((RelativeToTemporalCalculator<K, T, ? super V, ?>) calc);
-            }
-        }
+        final List<RelativeToNonTemporalCalculator<K, ? super V, ?>> relativeNonTemporal =
+                nonTemporalCalculators.stream()
+                        .filter(RelativeToNonTemporalCalculator.class::isInstance)
+                        .map(c -> (RelativeToNonTemporalCalculator<K, ? super V, ?>) c)
+                        .collect(Collectors.toList());
+        final List<RelativeToTemporalCalculator<K, T, ? super V, ?>> relativeTemporal =
+                temporalCalculators.stream()
+                        .filter(RelativeToTemporalCalculator.class::isInstance)
+                        .map(c -> (RelativeToTemporalCalculator<K, T, ? super V, ?>) c)
+                        .collect(Collectors.toList());
 
         // traverse entire collection
         for (int i = 0; i <= maxIndex; ++i) {
