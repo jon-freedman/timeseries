@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Calculates the sum of all numerical observations in a {@link com.github.jonfreedman.timeseries.TimeSeries} as a
+ * {@link BigDecimal}
+ *
  * @author jon
  */
 public class SumCalculator<K extends Comparable<K>> implements NonTemporalCalculator<K, Number, BigDecimal> {

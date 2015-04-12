@@ -5,6 +5,9 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 /**
+ * Calculates the maximum value observed in a {@link com.github.jonfreedman.timeseries.TimeSeries} together with its
+ * time value
+ *
  * @author jon
  */
 public class MaxValueCalculator<K extends Comparable<K>, T extends Comparable<? super T>, V extends Comparable<? super V>> implements TemporalCalculator<K, T, V, TemporalCalculator.Observation<T, V>> {
