@@ -1,8 +1,8 @@
 package com.github.jonfreedman.timeseries.steps
 
-import java.lang
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.{lang, math}
 
 import com.github.jonfreedman.timeseries.calculation.TemporalObservationMatcher._
 import com.github.jonfreedman.timeseries.calculation.number.SumCalculator
@@ -19,8 +19,6 @@ import scala.collection.JavaConverters._
  * @author jon
  */
 class Calculations @Inject()(collectionHelper: ArrayTimeSeriesCollectionHelper, calculationHelper: CalculationHelper) {
-  private val threshold = java.math.BigDecimal.valueOf(1e-8d)
-
   @When("sum is calculated")
   def sum() {
     val calculator = new SumCalculator[String]
@@ -30,18 +28,18 @@ class Calculations @Inject()(collectionHelper: ArrayTimeSeriesCollectionHelper, 
 
   @When("max is calculated")
   def max() {
-    val calculator = new MaxValueCalculator[String, LocalDate]
+    val calculator = new MaxValueCalculator[String, LocalDate, lang.Double]
     collectionHelper.collection.calculateTemporal(Seq[TemporalCalculator[String, LocalDate, _ >: lang.Double, _]](calculator).asJava)
     calculationHelper.observationResult = calculator.results
   }
 
   @Then( """BigDecimal result for '([a-z]+)' is (\d+(?:\.\d+)?)""")
-  def doubleResult(key: String, result: java.math.BigDecimal) {
-    assertThat(calculationHelper.bigDecimalResult.get(key), closeTo(result, threshold))
+  def doubleResult(key: String, result: math.BigDecimal) {
+    assertThat(calculationHelper.bigDecimalResult.get(key), closeTo(result, math.BigDecimal.valueOf(1e-8d)))
   }
 
   @Then( """Observation result for '([a-z]+)' is \('(\d{4}-\d{2}-\d{2})' -> (\d+(?:\.\d+)?)\)""")
-  def observationResult(key: String, timeValue: String, value: java.math.BigDecimal) {
-    assertThat(calculationHelper.observationResult.get(key), observation(equalTo(LocalDate.parse(timeValue, DateTimeFormatter.ofPattern("yyyy-MM-dd"))), closeTo(value, threshold)))
+  def observationResult(key: String, timeValue: String, value: Double) {
+    assertThat(calculationHelper.observationResult.get(key), observation(equalTo(LocalDate.parse(timeValue, DateTimeFormatter.ofPattern("yyyy-MM-dd"))), closeTo(value, 1e-8)))
   }
 }
