@@ -39,7 +39,7 @@ public class TestArrayTimeSeriesCollectionWithGuava {
                         return Collections.unmodifiableSortedSet(Collections.emptySortedSet());
                     }
                     final LocalDate d = LocalDate.of(2015, 4, 5);
-                    ArrayTimeSeriesCollectionHelper.LocalDateCollectionBuilder builder = new ArrayTimeSeriesCollectionHelper.LocalDateCollectionBuilder(d, d);
+                    ArrayTimeSeriesCollectionHelper.LocalDateCollectionBuilder builder = new ArrayTimeSeriesCollectionHelper.LocalDateCollectionBuilder();
                     for (String element : elements) {
                         builder = builder.addValue(element, d, 1);
                     }
@@ -61,7 +61,7 @@ public class TestArrayTimeSeriesCollectionWithGuava {
                     @Override
                     public Iterator<Map.Entry<String, TimeSeries<LocalDate, Double>>> get() {
                         final LocalDate d = LocalDate.of(2015, 4, 5);
-                        return new ArrayTimeSeriesCollectionHelper.LocalDateCollectionBuilder(d, d).addValue("foo", d, 1).build().iterator();
+                        return new ArrayTimeSeriesCollectionHelper.LocalDateCollectionBuilder().addValue("foo", d, 1).build().iterator();
                     }
                 });
             }

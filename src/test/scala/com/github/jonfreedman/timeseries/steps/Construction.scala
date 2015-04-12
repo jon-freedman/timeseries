@@ -21,9 +21,9 @@ import scala.collection.JavaConverters._
  * @author jon
  */
 class Construction @Inject()(helper: ArrayTimeSeriesCollectionHelper) {
-  @Given( """a LocalDate ArrayTimeSeriesCollection with start date '(\d{4}-\d{2}-\d{2})' and end date '(\d{4}-\d{2}-\d{2})'""")
-  def createLocalDateTimeSeriesCollection(s: String, e: String) {
-    helper.builder = new LocalDateCollectionBuilder(LocalDate.parse(s, DateTimeFormatter.ofPattern("yyyy-MM-dd")), LocalDate.parse(e, DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+  @Given( """a LocalDate ArrayTimeSeriesCollection""")
+  def createLocalDateTimeSeriesCollection() {
+    helper.builder = new LocalDateCollectionBuilder
   }
 
   @Given("collection uses zero value interpolation")

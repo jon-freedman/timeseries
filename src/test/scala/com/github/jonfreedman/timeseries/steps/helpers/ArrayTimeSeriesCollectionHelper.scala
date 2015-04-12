@@ -22,18 +22,19 @@ import cucumber.runtime.java.guice.ScenarioScoped
 
 object ArrayTimeSeriesCollectionHelper {
 
-  class LocalDateCollectionBuilder(first: LocalDate, last: LocalDate, values: Map[String, Map[LocalDate, lang.Double]],
-                                   interpolator: ValueInterpolator[lang.Double], traverser: util.function.Function[LocalDate, Traverser[LocalDate]]) {
-    def this(first: LocalDate, last: LocalDate) = this(first, last, Map.empty, new FlatFillInterpolator[lang.Double](Direction.forward), LocalDateTraverser.factory())
+  class LocalDateCollectionBuilder(values: Map[String, Map[LocalDate, lang.Double]],
+                                   interpolator: ValueInterpolator[lang.Double],
+                                   traverser: util.function.Function[LocalDate, Traverser[LocalDate]]) {
+    def this() = this(Map.empty, new FlatFillInterpolator[lang.Double](Direction.forward), LocalDateTraverser.factory())
 
     def addValue(key: String, date: LocalDate, value: Double): LocalDateCollectionBuilder =
-      new LocalDateCollectionBuilder(first, last, values.updated(key, values.getOrElse(key, Map.empty).updated(date, Double.box(value))), interpolator, traverser)
+      new LocalDateCollectionBuilder(values.updated(key, values.getOrElse(key, Map.empty).updated(date, Double.box(value))), interpolator, traverser)
 
     def withInterpolator(interpolator: ValueInterpolator[lang.Double]): LocalDateCollectionBuilder =
-      new LocalDateCollectionBuilder(first, last, values, interpolator, traverser)
+      new LocalDateCollectionBuilder(values, interpolator, traverser)
 
     def withTraverser(traverser: util.function.Function[LocalDate, Traverser[LocalDate]]): LocalDateCollectionBuilder =
-      new LocalDateCollectionBuilder(first, last, values, interpolator, traverser)
+      new LocalDateCollectionBuilder(values, interpolator, traverser)
 
     def build(): ArrayTimeSeriesCollection[String, LocalDate, lang.Double] = {
       val builder = new Builder[String, LocalDate, lang.Double]
