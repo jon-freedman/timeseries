@@ -10,6 +10,8 @@ import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executor;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -228,13 +230,35 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
      */
     public static final class Builder<K extends Comparable<K>, T extends Comparable<? super T>, V> {
         private final ConcurrentMap<K, ConcurrentMap<T, V>> state = new ConcurrentHashMap<>();
+        private final BiFunction<V, V, V> collationFunction;
 
+        public Builder() {
+            this((t, t2) -> {
+                throw new UnsupportedOperationException();
+            });
+        }
+
+        /**
+         * @param collationFunction Function used when more than one observation provided for a given key and time value
+         */
+        public Builder(final BiFunction<V, V, V> collationFunction) {
+            this.collationFunction = collationFunction;
+        }
+
+        @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
         public Builder<K, T, V> addValue(K key, T x, V y) {
             if (key == null) throw new NullPointerException("key value cannot be null");
             if (x == null) throw new NullPointerException("x value cannot be null");
             if (y == null) throw new NullPointerException("y value cannot be null");
             final ConcurrentMap<T, V> values = getWithPutIfAbsent(state, key, (v) -> new ConcurrentHashMap<>());
-            values.put(x, y);
+            synchronized (values) {
+                final V prev = values.get(x);
+                if (prev != null) {
+                    values.put(x, collationFunction.apply(prev, y));
+                } else {
+                    values.put(x, y);
+                }
+            }
             return this;
         }
 

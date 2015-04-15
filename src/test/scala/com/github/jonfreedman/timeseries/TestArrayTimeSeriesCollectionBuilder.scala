@@ -2,6 +2,7 @@ package com.github.jonfreedman.timeseries
 
 import java.lang
 import java.time.LocalDate
+import java.util.concurrent.Executors
 
 import com.github.jonfreedman.timeseries.ArrayTimeSeriesCollection.Builder
 import com.github.jonfreedman.timeseries.interpolator.ZeroValueInterpolator
@@ -56,5 +57,11 @@ class TestArrayTimeSeriesCollectionBuilder {
       .addValue("foo", LocalDate.of(2015, 4, 5), 0)
       .addValue("foo", LocalDate.of(2015, 4, 6), 1)
       .build(new ZeroValueInterpolator[Double](0d), WeekdayLocalDateTraverser.factory())
+  }
+
+  @Test(expected = classOf[UnsupportedOperationException]) def cannotAddMultipleObservationsForKeyAndTimeValueWithNoArgConstructor() {
+    new Builder[String, LocalDate, Double]
+      .addValue("foo", LocalDate.of(2015, 4, 2), 1)
+      .addValue("foo", LocalDate.of(2015, 4, 2), 1)
   }
 }

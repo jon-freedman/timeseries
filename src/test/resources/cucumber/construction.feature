@@ -56,3 +56,10 @@ Feature: Construction
     | key |
     | foo |
     | bar |
+
+  Scenario: TimeSeriesCollection can collate values
+    Given a LocalDate ArrayTimeSeriesCollection
+    And value for key 'foo' of ('2014-01-26' -> 1)
+    And value for key 'foo' of ('2014-01-27' -> 2)
+    And value for key 'foo' of ('2014-01-26' -> 3)
+    Then TimeSeries for key 'foo' contains [4, 2]
