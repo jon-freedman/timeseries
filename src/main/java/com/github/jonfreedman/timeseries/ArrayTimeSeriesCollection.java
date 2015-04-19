@@ -10,7 +10,6 @@ import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -245,20 +244,12 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
             this.collationFunction = collationFunction;
         }
 
-        @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
         public Builder<K, T, V> addValue(K key, T x, V y) {
             if (key == null) throw new NullPointerException("key value cannot be null");
             if (x == null) throw new NullPointerException("x value cannot be null");
             if (y == null) throw new NullPointerException("y value cannot be null");
             final ConcurrentMap<T, V> values = getWithPutIfAbsent(state, key, (v) -> new ConcurrentHashMap<>());
-            synchronized (values) {
-                final V prev = values.get(x);
-                if (prev != null) {
-                    values.put(x, collationFunction.apply(prev, y));
-                } else {
-                    values.put(x, y);
-                }
-            }
+            values.compute(x, (t, v) -> v == null ? y : collationFunction.apply(v, y));
             return this;
         }
 
