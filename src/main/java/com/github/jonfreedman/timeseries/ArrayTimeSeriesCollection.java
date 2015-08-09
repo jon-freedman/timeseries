@@ -16,6 +16,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
+ * Immutable collection of timeseries constructed using {@link com.github.jonfreedman.timeseries.ArrayTimeSeriesCollection.Builder}
+ * instance, a value will be interpolated for all time values but the interpolation can produce nulls.
+ *
  * @author jon
  */
 public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends Comparable<? super T>, V> implements TimeSeriesCollection<K, T, V> {
@@ -55,6 +58,20 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
             return this;
         }
         return new ArrayTimeSeriesCollection<>(initialTimeValue, traverserFactory, filteredValues);
+    }
+
+    @Override
+    public <KNew extends Comparable<KNew>> ArrayTimeSeriesCollection<KNew, T, V> group(final Function<K, KNew> groupFunction, final BiFunction<V, V, V> collationFunction) {
+        final Builder<KNew, T, V> builder = new Builder<>(collationFunction);
+        for (final Map.Entry<K, TimeSeries<T, V>> entry : this) {
+            final KNew newKey = groupFunction.apply(entry.getKey());
+            for (final Map.Entry<T, V> tsEntry : TimeSeries.Util.asTimeValueIterable(entry.getValue())) {
+                builder.addValue(newKey, tsEntry.getKey(), tsEntry.getValue());
+            }
+        }
+        return builder.build((x, prevX, prevY, nextX, nextY) -> {
+            throw new IllegalStateException("Cannot interpolate values within group");
+        }, traverserFactory);
     }
 
     @Override

@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.SortedSet;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -26,6 +28,14 @@ public interface TimeSeriesCollection<K extends Comparable<K>, T extends Compara
      * @return New collection with filter of keys based on predicate, the {@link #length()} of the new collection is the same
      */
     TimeSeriesCollection<K, T, V> filter(final Predicate<K> filter);
+
+    /**
+     * @param groupFunction Function to group keys
+     * @param collationFunction Function to collate timeseries values across keys
+     * @param <KNew> New key type
+     * @return New collection with each original key mapped onto a new key type and timeseries values collated across duplicate keys
+     */
+    <KNew extends Comparable<KNew>> TimeSeriesCollection<KNew, T, V> group(final Function<K, KNew> groupFunction, final BiFunction<V, V, V> collationFunction);
 
     /**
      * @return Smallest temporal value

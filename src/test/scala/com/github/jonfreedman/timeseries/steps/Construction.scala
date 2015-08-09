@@ -2,7 +2,7 @@ package com.github.jonfreedman.timeseries.steps
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.function.{Predicate, Supplier}
+import java.util.function.{BiFunction, Predicate, Supplier}
 import java.{lang, util}
 
 import com.github.jonfreedman.timeseries.ArrayTimeSeriesCollection
@@ -70,6 +70,18 @@ class Construction @Inject()(helper: ArrayTimeSeriesCollectionHelper) {
     }
   }
 
+  @When( """collection is grouped with first key character function""")
+  def groupByFirstKeyCharacter() {
+    val tsc = helper.collection.get.group[String](new util.function.Function[String, String] {
+      override def apply(t: String): String = t.substring(0, 1)
+    }, new BiFunction[lang.Double, lang.Double, lang.Double] {
+      override def apply(a: lang.Double, b: lang.Double): lang.Double = a + b
+    })
+    helper.collection = new Supplier[ArrayTimeSeriesCollection[String, LocalDate, lang.Double]] {
+      override def get(): ArrayTimeSeriesCollection[String, LocalDate, lang.Double] = tsc
+    }
+  }
+
   @Then( """the min date is '(\d{4}-\d{2}-\d{2})'""")
   def checkMinDate(d: String) {
     assertEquals(LocalDate.parse(d, DateTimeFormatter.ofPattern("yyyy-MM-dd")), helper.collection.get.minValue)
@@ -95,7 +107,7 @@ class Construction @Inject()(helper: ArrayTimeSeriesCollectionHelper) {
     assertEquals(l, helper.collection.get.length)
   }
 
-  @Then( """TimeSeries for key '([a-z]+)' contains \[((?:(?:\d+(?:\.\d+)?)|null)(?:, (?:(?:\d+(?:\.\d+)?)|null))*)\]""")
+  @Then( """TimeSeries for key '([a-z]+)' contains \[((?:(?:-?\d+(?:\.\d+)?)|null)(?:, (?:(?:-?\d+(?:\.\d+)?)|null))*)\]""")
   def timeSeriesContainsValueOnly(key: String, expected: util.List[String]) {
     val doubles = expected.asScala.map {
       case "null" => null
@@ -104,7 +116,7 @@ class Construction @Inject()(helper: ArrayTimeSeriesCollectionHelper) {
     assertThat(Lists.newArrayList(helper.collection.get.get(key).ordinalIterator), contains(doubles.toSeq: _*))
   }
 
-  @Then( """TimeSeries for key '([a-z]+)' contains values \[(\d+(?:\.\d+)?(?:, \d+(?:\.\d+)?)*)\] and timeValues \[('\d{4}-\d{2}-\d{2}'(?:, '\d{4}-\d{2}-\d{2}')*)\]""")
+  @Then( """TimeSeries for key '([a-z]+)' contains values \[(-?\d+(?:\.\d+)?(?:, -?\d+(?:\.\d+)?)*)\] and timeValues \[('\d{4}-\d{2}-\d{2}'(?:, '\d{4}-\d{2}-\d{2}')*)\]""")
   def timeSeriesContainsValueWithTimeValue(key: String, expectedValues: util.List[lang.Double], expectedTimeValues: util.List[String]) {
     case class Entry(@BeanProperty key: LocalDate, @BeanProperty value: lang.Double) extends util.Map.Entry[LocalDate, lang.Double] {
       override def setValue(value: lang.Double): lang.Double = throw new UnsupportedOperationException

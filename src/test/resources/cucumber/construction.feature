@@ -78,3 +78,16 @@ Feature: Construction
     And value for key 'foo' of ('2014-01-28' -> 3)
     Then TimeSeries for key 'foo' contains [1, 2, 3]
 
+  Scenario: TimeSeriesCollection can be grouped
+    Given a LocalDate ArrayTimeSeriesCollection
+    And collection uses zero value interpolation
+    And value for key 'bar' of ('2014-01-26' -> 1)
+    And value for key 'bar' of ('2014-01-27' -> 2)
+    And value for key 'bar' of ('2014-01-28' -> 3)
+    And value for key 'baz' of ('2014-01-26' -> -1)
+    And value for key 'baz' of ('2014-01-27' -> -3)
+    When collection is grouped with first key character function
+    Then there are 1 keys
+    And keys contains 'b'
+    And length is 3
+    And TimeSeries for key 'b' contains [0, -1, 3]
