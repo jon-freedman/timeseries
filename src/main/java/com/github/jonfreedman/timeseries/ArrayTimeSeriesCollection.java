@@ -305,7 +305,7 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
             for (int i = 0; i < timeValues.size(); ++i) {
                 for (final Map.Entry<K, SortedMap<Integer, V>> entry : values.entrySet()) {
                     SortedMap<Integer, V> ts = entry.getValue();
-                    if (ts.get(i) == null && interpolator != null) {
+                    if (ts.get(i) == null) {
                         final SortedMap<Integer, V> headMap = ts.headMap(i);
                         final SortedSet<Integer> tailKeys = new TreeSet<>(ts.tailMap(i).keySet());
                         tailKeys.remove(i);
