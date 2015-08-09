@@ -5,8 +5,7 @@ import java.util.function.{BiFunction, Supplier}
 import java.{lang, util}
 
 import com.github.jonfreedman.timeseries.ArrayTimeSeriesCollection.Builder
-import com.github.jonfreedman.timeseries.interpolator.FlatFillInterpolator.Direction
-import com.github.jonfreedman.timeseries.interpolator.{FlatFillInterpolator, ValueInterpolator}
+import com.github.jonfreedman.timeseries.interpolator.{ZeroValueInterpolator, FlatFillInterpolator, ValueInterpolator}
 import com.github.jonfreedman.timeseries.localdate.LocalDateTraverser
 import com.github.jonfreedman.timeseries.steps.helpers.ArrayTimeSeriesCollectionHelper.LocalDateCollectionBuilder
 import com.github.jonfreedman.timeseries.{ArrayTimeSeriesCollection, Traverser}
@@ -28,7 +27,7 @@ object ArrayTimeSeriesCollectionHelper {
   class LocalDateCollectionBuilder(values: Map[String, Seq[(LocalDate, lang.Double)]],
                                    interpolator: ValueInterpolator[lang.Double],
                                    traverser: util.function.Function[LocalDate, Traverser[LocalDate]]) {
-    def this() = this(Map.empty, new FlatFillInterpolator[lang.Double](Direction.forward), LocalDateTraverser.factory())
+    def this() = this(Map.empty, new ZeroValueInterpolator[lang.Double](null), LocalDateTraverser.factory())
 
     def addValue(key: String, date: LocalDate, value: Double): LocalDateCollectionBuilder =
       new LocalDateCollectionBuilder(values.updated(key, values.getOrElse(key, Seq.empty) :+ (date -> Double.box(value))), interpolator, traverser)

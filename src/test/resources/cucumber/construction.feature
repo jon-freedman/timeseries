@@ -63,3 +63,18 @@ Feature: Construction
     And value for key 'foo' of ('2014-01-27' -> 2)
     And value for key 'foo' of ('2014-01-26' -> 3)
     Then TimeSeries for key 'foo' contains [4, 2]
+
+  Scenario: TimeSeriesCollection can be built with null value interpolator
+    Given a LocalDate ArrayTimeSeriesCollection
+    And collection uses null value interpolation
+    And value for key 'foo' of ('2014-01-26' -> 1)
+    And value for key 'foo' of ('2014-01-28' -> 3)
+    Then TimeSeries for key 'foo' contains [1, null, 3]
+
+  Scenario: TimeSeriesCollection can be built with interpolator
+    Given a LocalDate ArrayTimeSeriesCollection
+    And collection uses linear interpolation
+    And value for key 'foo' of ('2014-01-26' -> 1)
+    And value for key 'foo' of ('2014-01-28' -> 3)
+    Then TimeSeries for key 'foo' contains [1, 2, 3]
+

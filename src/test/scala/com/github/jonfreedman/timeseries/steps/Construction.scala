@@ -6,7 +6,8 @@ import java.util.function.{Predicate, Supplier}
 import java.{lang, util}
 
 import com.github.jonfreedman.timeseries.ArrayTimeSeriesCollection
-import com.github.jonfreedman.timeseries.interpolator.ZeroValueInterpolator
+import com.github.jonfreedman.timeseries.interpolator.FlatFillInterpolator.Direction
+import com.github.jonfreedman.timeseries.interpolator.{FlatFillInterpolator, LinearInterpolator, ZeroValueInterpolator}
 import com.github.jonfreedman.timeseries.localdate.WeekdayLocalDateTraverser
 import com.github.jonfreedman.timeseries.steps.helpers.ArrayTimeSeriesCollectionHelper
 import com.github.jonfreedman.timeseries.steps.helpers.ArrayTimeSeriesCollectionHelper.LocalDateCollectionBuilder
@@ -28,9 +29,24 @@ class Construction @Inject()(helper: ArrayTimeSeriesCollectionHelper) {
     helper.builder = new LocalDateCollectionBuilder
   }
 
+  @Given("collection uses flat fill interpolation")
+  def useFlatFillInterpolation() {
+    helper.builder = helper.builder.withInterpolator(new FlatFillInterpolator[lang.Double](Direction.forward))
+  }
+
   @Given("collection uses zero value interpolation")
   def useZeroValueInterpolation() {
     helper.builder = helper.builder.withInterpolator(new ZeroValueInterpolator(0d))
+  }
+
+  @Given("collection uses null value interpolation")
+  def useNullValueInterpolation() {
+    helper.builder = helper.builder.withInterpolator(new ZeroValueInterpolator(null))
+  }
+
+  @Given("collection uses linear interpolation")
+  def useLinearInterpolation() {
+    helper.builder = helper.builder.withInterpolator(new LinearInterpolator())
   }
 
   @Given("collection uses weekday traversal")
@@ -79,9 +95,13 @@ class Construction @Inject()(helper: ArrayTimeSeriesCollectionHelper) {
     assertEquals(l, helper.collection.get.length)
   }
 
-  @Then( """TimeSeries for key '([a-z]+)' contains \[(\d+(?:\.\d+)?(?:, \d+(?:\.\d+)?)*)\]""")
-  def timeSeriesContainsValueOnly(key: String, expected: util.List[lang.Double]) {
-    assertThat(Lists.newArrayList(helper.collection.get.get(key).ordinalIterator), contains(expected.asScala.toSeq: _*))
+  @Then( """TimeSeries for key '([a-z]+)' contains \[((?:(?:\d+(?:\.\d+)?)|null)(?:, (?:(?:\d+(?:\.\d+)?)|null))*)\]""")
+  def timeSeriesContainsValueOnly(key: String, expected: util.List[String]) {
+    val doubles = expected.asScala.map {
+      case "null" => null
+      case v => lang.Double.valueOf(v)
+    }
+    assertThat(Lists.newArrayList(helper.collection.get.get(key).ordinalIterator), contains(doubles.toSeq: _*))
   }
 
   @Then( """TimeSeries for key '([a-z]+)' contains values \[(\d+(?:\.\d+)?(?:, \d+(?:\.\d+)?)*)\] and timeValues \[('\d{4}-\d{2}-\d{2}'(?:, '\d{4}-\d{2}-\d{2}')*)\]""")

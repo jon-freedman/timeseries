@@ -244,7 +244,7 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
             this.collationFunction = collationFunction;
         }
 
-        public Builder<K, T, V> addValue(K key, T x, V y) {
+        public Builder<K, T, V> addValue(final K key, final T x, final V y) {
             if (key == null) throw new NullPointerException("key value cannot be null");
             if (x == null) throw new NullPointerException("x value cannot be null");
             if (y == null) throw new NullPointerException("y value cannot be null");
@@ -255,6 +255,9 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
 
         public ArrayTimeSeriesCollection<K, T, V> build(final ValueInterpolator<V> interpolator,
                                                         final Function<T, Traverser<T>> traverserFactory) {
+            if (interpolator == null) throw new NullPointerException("interpolator cannot be null");
+            if (traverserFactory == null) throw new NullPointerException("traverserFactory cannot be null");
+
             // build set of all time values present across all keys
             final SortedSet<T> timeValues = new TreeSet<>();
             for (final Map<T, V> vs : state.values()) {
@@ -302,7 +305,7 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
             for (int i = 0; i < timeValues.size(); ++i) {
                 for (final Map.Entry<K, SortedMap<Integer, V>> entry : values.entrySet()) {
                     SortedMap<Integer, V> ts = entry.getValue();
-                    if (ts.get(i) == null) {
+                    if (ts.get(i) == null && interpolator != null) {
                         final SortedMap<Integer, V> headMap = ts.headMap(i);
                         final SortedSet<Integer> tailKeys = new TreeSet<>(ts.tailMap(i).keySet());
                         tailKeys.remove(i);
