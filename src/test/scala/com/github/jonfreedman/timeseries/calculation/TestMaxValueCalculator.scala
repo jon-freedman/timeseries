@@ -4,7 +4,8 @@ import java.time.LocalDate
 import java.util.function.Supplier
 import java.{lang, util}
 
-import com.github.jonfreedman.timeseries.calculation.TemporalObservationMatcher._
+import com.github.jonfreedman.timeseries.matchers.TemporalObservationMatcher
+import com.github.jonfreedman.timeseries.matchers.TemporalObservationMatcher._
 import org.hamcrest.Matchers._
 import org.junit.Assert._
 import org.junit.Test

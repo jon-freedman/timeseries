@@ -4,9 +4,10 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.{lang, math}
 
-import com.github.jonfreedman.timeseries.calculation.TemporalObservationMatcher._
 import com.github.jonfreedman.timeseries.calculation.number.SumCalculator
 import com.github.jonfreedman.timeseries.calculation.{MaxValueCalculator, NonTemporalCalculator, TemporalCalculator}
+import com.github.jonfreedman.timeseries.matchers.TemporalObservationMatcher
+import com.github.jonfreedman.timeseries.matchers.TemporalObservationMatcher._
 import com.github.jonfreedman.timeseries.steps.helpers.{ArrayTimeSeriesCollectionHelper, CalculationHelper}
 import com.google.inject.Inject
 import cucumber.api.java.en._

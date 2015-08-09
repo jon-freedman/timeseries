@@ -1,5 +1,6 @@
-package com.github.jonfreedman.timeseries.calculation
+package com.github.jonfreedman.timeseries.matchers
 
+import com.github.jonfreedman.timeseries.calculation.TemporalCalculator
 import com.github.jonfreedman.timeseries.calculation.TemporalCalculator.Observation
 import org.hamcrest.{Description, Matcher, TypeSafeMatcher}
 
