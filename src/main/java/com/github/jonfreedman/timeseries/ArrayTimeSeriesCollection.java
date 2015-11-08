@@ -62,16 +62,18 @@ public final class ArrayTimeSeriesCollection<K extends Comparable<K>, T extends 
 
     @Override
     public <KNew extends Comparable<KNew>> ArrayTimeSeriesCollection<KNew, T, V> group(final Function<K, KNew> groupFunction, final BiFunction<V, V, V> collationFunction) {
-        final Builder<KNew, T, V> builder = new Builder<>(collationFunction);
-        for (final Map.Entry<K, TimeSeries<T, V>> entry : this) {
+        final Map<KNew, V[]> grouped = new HashMap<>();
+        for (final Map.Entry<K, V[]> entry : this.values.entrySet()) {
             final KNew newKey = groupFunction.apply(entry.getKey());
-            for (final Map.Entry<T, V> tsEntry : TimeSeries.Util.asTimeValueIterable(entry.getValue())) {
-                builder.addValue(newKey, tsEntry.getKey(), tsEntry.getValue());
+            //noinspection unchecked
+            final V[] values = grouped.computeIfAbsent(newKey, k -> (V[]) Array.newInstance(entry.getValue()[0].getClass(), maxIndex + 1));
+            for (int i = 0; i < entry.getValue().length; ++i) {
+                final V prev = values[i];
+                final V next = entry.getValue()[i];
+                values[i] = prev == null ? next : collationFunction.apply(prev, next);
             }
         }
-        return builder.build((x, prevX, prevY, nextX, nextY) -> {
-            throw new IllegalStateException("Cannot interpolate values within group");
-        }, traverserFactory);
+        return new ArrayTimeSeriesCollection<>(initialTimeValue, traverserFactory, grouped);
     }
 
     @Override
